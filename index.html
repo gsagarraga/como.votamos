@@ -58,10 +58,12 @@
   .tema svg{ width:15px; height:15px; }
 
   /* ---------- cabecera ---------- */
-  .hero{ padding-block:clamp(36px, 6vw, 64px) clamp(28px, 4vw, 44px); display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr) auto; gap:24px 48px; align-items:end; }
-  @media (max-width:1020px){ .hero{ grid-template-columns:minmax(0, 1fr) auto; } .hero > div:nth-child(2){ grid-column:1; } .mapa{ grid-row:1 / span 2; grid-column:2; } }
-  @media (max-width:640px){ .hero{ grid-template-columns:1fr; } .mapa{ grid-row:auto; grid-column:auto; justify-self:center; } }
-  h1{ font-size:clamp(2.3rem, 6vw, 4.4rem); line-height:.98; margin:0; font-weight:800; letter-spacing:-.035em; text-wrap:balance; }
+  .hero{ padding-block:clamp(36px, 5vw, 60px) clamp(28px, 4vw, 44px); display:grid; grid-template-columns:minmax(0, 1fr) auto; grid-template-rows:1fr auto auto 1fr; column-gap:clamp(32px, 6vw, 96px); row-gap:0; }
+  .hero h1{ grid-column:1; grid-row:2; margin-bottom:28px; }
+  .hero > div:nth-child(2){ grid-column:1; grid-row:3; max-width:780px; }
+  .mapa{ grid-column:2; grid-row:1 / span 4; align-self:center; }
+  @media (max-width:640px){ .hero{ grid-template-columns:1fr; grid-template-rows:none; row-gap:24px; } .hero h1{ margin-bottom:0; } .hero h1, .hero > div:nth-child(2), .mapa{ grid-column:1; grid-row:auto; } .mapa{ justify-self:center; } }
+  h1{ font-size:clamp(2.3rem, 5.6vw, 4.6rem); line-height:.98; margin:0; font-weight:800; letter-spacing:-.035em; text-wrap:balance; }
   h1{ color:var(--ink); }
   h1 .celeste{ color:var(--celeste); }
   .bajada{ max-width:58ch; font-size:1.06rem; line-height:1.55; color:var(--ink-soft); margin:0 0 22px; }
@@ -169,7 +171,7 @@
 
   footer{ border-top:2px solid var(--ink); padding-block:28px 48px; font-size:.8rem; line-height:1.55; color:var(--ink-soft); }
   footer .wrap{ display:grid; gap:10px; }
-  footer p{ margin:0; max-width:80ch; }
+  footer p{ margin:0; }
   footer b{ color:var(--ink); font-weight:600; }
   .firma{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.3rem 1.2rem; margin-top:10px; padding-top:14px; border-top:1px solid var(--border); }
   .firma-nombre{ font-weight:700; color:var(--ink); font-size:.92rem; }
@@ -182,7 +184,7 @@
   .sim-aviso{ margin:.6rem 0 0 !important; padding:.45rem .7rem; border-left:3px solid var(--c-pend); background:var(--pend-bg); color:var(--pend-fg) !important; font-size:.84rem; max-width:62ch; }
 
   /* mapa de la portada */
-  .mapa{ margin:0; width:clamp(118px, 13vw, 150px); position:relative; }
+  .mapa{ margin:0; width:clamp(118px, 15vw, 200px); position:relative; }
   .mapa svg{ display:block; width:100%; height:auto; overflow:visible; }
   .mapa path, .mapa circle{ fill:var(--mc); stroke:var(--bg); stroke-width:2.2; stroke-linejoin:round; cursor:pointer; transition:opacity .15s ease, filter .15s ease; }
   .mapa a:hover path, .mapa a:hover circle, .mapa a:focus-visible path, .mapa a:focus-visible circle{ filter:brightness(.82); }

@@ -13,7 +13,7 @@ window.FICTICIOS = (function(){
   };
   const PARTIDOS = [
     { code:'p1', num:'101', nombre:'Unidad Vecinal',      color:'#971b2f' },
-    { code:'p2', num:'202', nombre:'Frente Renovador',    color:'#3f75a8' },
+    { code:'p2', num:'202', nombre:'Horizonte Común',     color:'#3f75a8' },
     { code:'p3', num:'303', nombre:'Encuentro Ciudadano', color:'#7a6038' },
     { code:'p4', num:'404', nombre:'Convergencia Social', color:'#2f8fb8' },
     { code:'p5', num:'505', nombre:'Movimiento Federal',  color:'#b5485a' },

@@ -1,15 +1,16 @@
 /* Vista de simulador (común a todos los motores) + motor de boleta partidaria */
 
 /* ---------- cabecera del simulador ---------- */
-.sim-cab{ padding-block:28px 32px; display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:20px 56px; align-items:end; border-bottom:1px solid var(--border); margin-bottom:32px; }
-@media (max-width:860px){ .sim-cab{ grid-template-columns:1fr; } }
+.sim-cab{ padding-block:28px 32px; display:grid; grid-template-columns:minmax(0, 1fr); gap:22px; border-bottom:1px solid var(--border); margin-bottom:32px; }
 .volver{ grid-column:1 / -1; justify-self:start; display:inline-flex; align-items:center; gap:.45rem; font-size:.84rem; font-weight:700; text-decoration:none; color:var(--ink); padding:.5rem .85rem .5rem .65rem; border:1.5px solid var(--ink); border-radius:var(--radius); background:var(--panel); transition:background .15s ease, color .15s ease; }
 .volver:hover{ background:var(--ink); color:var(--bg); }
 .volver svg{ width:16px; height:16px; }
 .sim-tit h2{ margin:0 0 6px; font-size:clamp(2rem, 4.6vw, 3.2rem); line-height:1; font-weight:800; letter-spacing:-.03em; }
 .sim-tit p{ margin:0; color:var(--ink-soft); }
 .sim-tit .rotulo{ margin-bottom:10px; }
-.sim-guia{ display:grid; gap:14px; }
+.sim-guia{ display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr); gap:14px 56px; align-items:start; padding-top:20px; border-top:1px dashed var(--border); }
+@media (max-width:860px){ .sim-guia{ grid-template-columns:1fr; } }
+.sim-guia .avisos{ border-top:0; padding-top:0; }
 .pasos{ margin:0; padding:0; list-style:none; counter-reset:paso; display:grid; gap:6px; }
 .pasos li{ counter-increment:paso; display:flex; gap:.7rem; align-items:baseline; font-size:.94rem; }
 .pasos li::before{ content:counter(paso); flex:0 0 1.5rem; height:1.5rem; display:inline-flex; align-items:center; justify-content:center; font-size:.76rem; font-weight:700; border:1.5px solid var(--ink); border-radius:var(--radius); font-variant-numeric:tabular-nums; }

@@ -182,14 +182,7 @@
       paths += '<a href="'+href+'" data-mec="'+j.mecanica+'" data-nombre="'+j.nombre+'" style="--mc:var(--c-'+j.mecanica+')">'+t+'<path d="'+d+'"/></a>';
     });
     // CABA al final para que quede encima
-    mapa.innerHTML = '<svg viewBox="-10 -644 816 1885" role="img" aria-hidden="false">'+paths+'</svg><figcaption id="mapa-nombre">Tocá un distrito</figcaption>';
-    const cap = document.getElementById('mapa-nombre');
-    mapa.querySelectorAll('a').forEach(function(a){
-      const nm = a.getAttribute('data-nombre') + ' · ' + M[a.getAttribute('data-mec')].nombre;
-      a.addEventListener('mouseenter', function(){ cap.textContent = nm; });
-      a.addEventListener('focus', function(){ cap.textContent = nm; });
-      a.addEventListener('mouseleave', function(){ cap.textContent = 'Tocá un distrito'; });
-    });
+    mapa.innerHTML = '<svg viewBox="-10 -644 816 1885" role="img" aria-hidden="false">'+paths+'</svg>';
     const caba = mapa.querySelector('a[data-nombre^="Ciudad"]'); if(caba) caba.parentNode.appendChild(caba);
   }
 
