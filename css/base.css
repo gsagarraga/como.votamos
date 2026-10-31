@@ -1,0 +1,83 @@
+/* ¿Cómo votamos en Argentina? — tokens y base compartidos por portada y motores */
+:root{
+  --bg:#faf6f1;
+  --panel:#fffdfa;
+  --ink:#2b201f;
+  --ink-soft:#7a6a63;
+  --border:#ecdfd8;
+  --shadow:0 18px 44px -22px rgba(70,35,30,.28);
+
+  /* una mecánica = un color (misma paleta que el sitio del TFG) */
+  --c-partidaria:#4fa6d9;
+  --c-bup:#d8503c;
+  --c-bue:#4f9668;
+  --celeste:#3d95d6;
+  --c-pend:#d9aa35;
+
+  --radius:3px;
+
+  /* superficies y estados (las miniaturas y etiquetas los usan) */
+  --paper:#ffffff;
+  --paper-tint-1:#e2eef6;
+  --paper-tint-2:#cfe4f1;
+  --sobre:#f3e7d4;
+  --sobre-borde:#a88f69;
+  --negro-lc:#1f1f1f;
+  --chip-activo-fg:#ffffff;
+  --ok-bg:#dcefe3; --ok-fg:#1f6b3c;
+  --pend-bg:#f6ead0; --pend-fg:#7a5a17; --pend-txt:#8a6a2a;
+  --neutro-bg:#efe9e5;
+  --mal-bg:#f6dcd7; --mal-fg:#a12d1f;
+  --birome:#1f4fb0; --bup-linea:#c9c4c0; --bup-cat:#2b2624; --bup-cat-fg:#ffffff;
+  --norma-bg:#f3eeea;
+  --mix-base:#ffffff; --mix-ink:#000000;
+  --glow-1:#fff8ea; --glow-2:#eef5fa;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1a1716; --panel:#24201e; --ink:#f1e9e4; --ink-soft:#ad9f98; --border:#3a3330;
+  --shadow:0 18px 44px -22px rgba(0,0,0,.6);
+  --c-partidaria:#6cb8e6; --c-bup:#ec6f5c; --c-bue:#6cb487; --celeste:#7cc0f0;
+  --paper:#2e2926; --paper-tint-1:#2a3740; --paper-tint-2:#2f4350;
+  --sobre:#4a3f30; --sobre-borde:#b49c76; --negro-lc:#0c0b0b;
+  --chip-activo-fg:#1a1716;
+  --ok-bg:#1f3a2a; --ok-fg:#9bd8b1; --pend-bg:#3d321c; --pend-fg:#e8c77d; --pend-txt:#d9b56a;
+  --neutro-bg:#332d2a; --norma-bg:#2f2a27;
+  --mal-bg:#45231e; --mal-fg:#f1a497;
+  --birome:#9db8ff; --bup-linea:#4a423e; --bup-cat:#0f0d0c; --bup-cat-fg:#f1e9e4;
+  --mix-base:#24201e; --mix-ink:#ffffff;
+  --glow-1:#2a2420; --glow-2:#1d2529;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1a1716; --panel:#24201e; --ink:#f1e9e4; --ink-soft:#ad9f98; --border:#3a3330;
+  --shadow:0 18px 44px -22px rgba(0,0,0,.6);
+  --c-partidaria:#6cb8e6; --c-bup:#ec6f5c; --c-bue:#6cb487; --celeste:#7cc0f0;
+  --paper:#2e2926; --paper-tint-1:#2a3740; --paper-tint-2:#2f4350;
+  --sobre:#4a3f30; --sobre-borde:#b49c76; --negro-lc:#0c0b0b;
+  --chip-activo-fg:#1a1716;
+  --ok-bg:#1f3a2a; --ok-fg:#9bd8b1; --pend-bg:#3d321c; --pend-fg:#e8c77d; --pend-txt:#d9b56a;
+  --neutro-bg:#332d2a; --norma-bg:#2f2a27;
+  --mal-bg:#45231e; --mal-fg:#f1a497;
+  --birome:#9db8ff; --bup-linea:#4a423e; --bup-cat:#0f0d0c; --bup-cat-fg:#f1e9e4;
+  --mix-base:#24201e; --mix-ink:#ffffff;
+  --glow-1:#2a2420; --glow-2:#1d2529;
+  color-scheme:dark;
+}
+*{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+body{ margin:0; }
+body{
+  background:
+    radial-gradient(1100px 520px at 10% -10%, var(--glow-1) 0%, transparent 60%),
+    radial-gradient(900px 460px at 110% 0%, var(--glow-2) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Rubik","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{ color:inherit; }
+:focus-visible{ outline:3px solid #6cace4; outline-offset:2px; }
+.wrap{ max-width:1180px; margin:0 auto; padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px)); }
+@media (max-width:640px){ .wrap{ padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); } }
+@media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }

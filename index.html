@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Cómo votamos en Argentina? · Simuladores electorales</title>
+<meta name="description" content="Simuladores de todas las formas de votar en Argentina: boleta partidaria, Boleta Única de Papel y Boleta Única Electrónica, en los 24 distritos y a nivel nacional. Practicá y mirá cómo se cuenta tu voto.">
+<meta name="author" content="Gonzalo Sagarraga">
+<meta name="theme-color" content="#faf6f1">
+<link rel="canonical" href="https://gsagarraga.github.io/como.votamos/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Open Graph (WhatsApp, Facebook, LinkedIn, Telegram) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:site_name" content="¿Cómo votamos en Argentina?">
+<meta property="og:title" content="¿Cómo votamos en Argentina?">
+<meta property="og:description" content="Practicá cada forma de votar del país —boleta partidaria, Boleta Única de Papel y Boleta Única Electrónica— y mirá cómo se cuenta tu voto.">
+<meta property="og:url" content="https://gsagarraga.github.io/como.votamos/">
+<meta property="og:image" content="https://gsagarraga.github.io/como.votamos/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mapa de Argentina coloreado según el tipo de boleta de cada distrito, junto al título ¿Cómo votamos en Argentina?">
+
+<!-- X / Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="¿Cómo votamos en Argentina?">
+<meta name="twitter:description" content="Practicá cada forma de votar del país y mirá cómo se cuenta tu voto.">
+<meta name="twitter:image" content="https://gsagarraga.github.io/como.votamos/og-image.png">
+<meta name="twitter:image:alt" content="Mapa de Argentina coloreado según el tipo de boleta de cada distrito.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"¿Cómo votamos en Argentina?","url":"https://gsagarraga.github.io/como.votamos/","inLanguage":"es-AR","description":"Simuladores de todas las formas de votar en Argentina: boleta partidaria, Boleta Única de Papel y Boleta Única Electrónica, en los 24 distritos y a nivel nacional. Practicá y mirá cómo se cuenta tu voto.","author":{"@type":"Person","name":"Gonzalo Sagarraga"}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/simulador.css">
+<link rel="stylesheet" href="css/bup-columnas.css">
+<link rel="stylesheet" href="css/bup-filas.css">
+<link rel="stylesheet" href="css/bue.css">
+<style>
+  /* Lenguaje visual: papelería electoral. Esquinas casi rectas, filetes finos,
+     rótulos en versalitas y cifras tabulares, como un acta o una boleta. */
+
+  /* ---------- franja superior ---------- */
+  body::before{ content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:10; background:var(--bg); }
+  .franja{ border-bottom:1px solid var(--border); }
+  .franja .wrap{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:12px; }
+  .marca{ display:flex; align-items:center; gap:.6rem; font-size:.74rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
+  .marca .flag{ width:24px; height:15px; box-shadow:0 0 0 1px var(--border); background:linear-gradient(#74acdf 0 33%, var(--paper) 33% 66%, #74acdf 66%); }
+  .tema{ font:inherit; font-size:.78rem; font-weight:600; display:inline-flex; align-items:center; gap:.45rem; padding:.42rem .75rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); color:var(--ink); cursor:pointer; }
+  .tema{ white-space:nowrap; flex:0 0 auto; }
+  .tema:hover{ border-color:var(--ink-soft); }
+  .tema svg{ width:15px; height:15px; }
+
+  /* ---------- cabecera ---------- */
+  .hero{ padding-block:clamp(36px, 6vw, 64px) clamp(28px, 4vw, 44px); display:grid; grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr) auto; gap:24px 48px; align-items:end; }
+  @media (max-width:1020px){ .hero{ grid-template-columns:minmax(0, 1fr) auto; } .hero > div:nth-child(2){ grid-column:1; } .mapa{ grid-row:1 / span 2; grid-column:2; } }
+  @media (max-width:640px){ .hero{ grid-template-columns:1fr; } .mapa{ grid-row:auto; grid-column:auto; justify-self:center; } }
+  h1{ font-size:clamp(2.3rem, 6vw, 4.4rem); line-height:.98; margin:0; font-weight:800; letter-spacing:-.035em; text-wrap:balance; }
+  h1{ color:var(--ink); }
+  h1 .celeste{ color:var(--celeste); }
+  .bajada{ max-width:58ch; font-size:1.06rem; line-height:1.55; color:var(--ink-soft); margin:0 0 22px; }
+  .bajada b{ color:var(--ink); font-weight:600; }
+
+  .cifras{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:2px solid var(--ink); border-bottom:1px solid var(--border); }
+  .cifra{ font:inherit; text-align:left; cursor:pointer; background:none; border:0; border-left:1px solid var(--border); padding:12px 14px 14px; color:var(--ink); display:flex; flex-direction:column; gap:6px; position:relative; }
+  .cifra:first-child{ border-left:0; padding-left:0; }
+  .cifra::before{ content:""; position:absolute; top:-2px; left:0; right:0; height:4px; background:var(--mc); transform:scaleX(0); transform-origin:left; transition:transform .2s ease; }
+  .cifra:hover::before, .cifra.activo::before{ transform:scaleX(1); }
+  .cifra b{ font-size:2.4rem; line-height:1; font-weight:700; color:var(--mc); font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .cifra span{ font-size:.78rem; line-height:1.3; color:var(--ink-soft); font-weight:500; }
+
+  /* ---------- barra de filtros ---------- */
+  .barra{ position:sticky; top:env(safe-area-inset-top, 0px); z-index:20; background:color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter:blur(8px); border-block:1px solid var(--border); }
+  .barra .wrap{ display:flex; align-items:center; gap:12px; padding-block:10px; flex-wrap:wrap; }
+  .chips{ display:flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .chip{ font:inherit; font-size:.8rem; font-weight:600; padding:.46rem .85rem; border:0; border-left:1px solid var(--border); background:var(--panel); color:var(--ink); cursor:pointer; }
+  .chip:first-child{ border-left:0; }
+  .chip .d{ display:inline-block; width:8px; height:8px; margin-right:.45rem; vertical-align:1px; }
+  .chip.activo{ background:var(--ink); color:var(--chip-activo-fg); }
+  .buscar{ margin-left:auto; font:inherit; font-size:.86rem; padding:.48rem .8rem; border-radius:var(--radius); border:1px solid var(--border); background:var(--panel); color:var(--ink); width:min(260px, 100%); }
+  .chip{ white-space:nowrap; }
+  @media (max-width:640px){
+    .buscar{ margin-left:0; width:100%; }
+    .chips{ flex-wrap:nowrap; overflow-x:auto; max-width:100%; scrollbar-width:none; }
+    .chips::-webkit-scrollbar{ display:none; }
+  }
+
+  /* ---------- secciones ---------- */
+  main{ padding-block:44px 64px; display:flex; flex-direction:column; gap:72px; }
+  #grupos{ display:flex; flex-direction:column; gap:72px; }
+  .rotulo{ font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 12px; }
+
+  .grupo-head{ display:grid; grid-template-columns:minmax(220px, 340px) minmax(0, 1fr); gap:12px 48px; align-items:start; padding-top:18px; border-top:2px solid var(--ink); margin-bottom:28px; position:relative; }
+  .grupo-head::before{ content:""; position:absolute; top:-2px; left:0; width:96px; height:6px; background:var(--mc); }
+  @media (max-width:760px){ .grupo-head{ grid-template-columns:1fr; } }
+  .grupo-tit h2{ margin:0 0 4px; font-size:clamp(1.45rem, 2.4vw, 1.8rem); line-height:1.1; font-weight:700; letter-spacing:-.02em; text-wrap:balance; }
+  .grupo-tit .n{ font-size:.82rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+  .grupo-txt{ max-width:68ch; }
+  .grupo-txt p{ margin:0 0 .5rem; font-size:.96rem; line-height:1.55; }
+  .grupo-txt .err{ font-size:.86rem; color:var(--ink-soft); }
+  .grupo-txt .err b{ color:var(--ink); font-weight:600; }
+  .grupo-txt .pend{ font-size:.8rem; margin-top:.6rem; }
+
+  .sub + .sub{ margin-top:36px; }
+  .sub-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.25rem 1rem; margin:0 0 14px; padding-bottom:10px; border-bottom:1px dashed var(--border); }
+  .sub-head h4{ margin:0; font-size:1rem; font-weight:600; }
+  .sub-head p{ margin:0; font-size:.86rem; color:var(--ink-soft); }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap:16px; }
+  .grid > *{ min-width:0; }
+  /* boleta partidaria: grilla tipo planilla, con filetes compartidos */
+  .grid-compacta{ grid-template-columns:repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
+
+  /* ---------- tarjeta ---------- */
+  .card{ --mc:var(--c-bup); display:flex; gap:16px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:18px; text-decoration:none; color:inherit; }
+  .card.mec-partidaria{ --mc:var(--c-partidaria); }
+  .card.mec-bue{ --mc:var(--c-bue); }
+  a.card{ transition:border-color .15s ease; }
+  a.card:hover{ border-color:var(--mc); }
+  .card-mini{ flex:0 0 92px; height:60px; background:color-mix(in srgb, var(--mc) 9%, var(--mix-base)); display:flex; align-items:center; justify-content:center; }
+  .card-mini svg{ width:92px; height:60px; display:block; }
+  .card-body{ flex:1 1 auto; min-width:0; overflow-wrap:break-word; }
+  .card-top{ display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:6px 10px; }
+  .card h3{ margin:0; font-size:1.1rem; font-weight:700; line-height:1.2; letter-spacing:-.01em; overflow-wrap:normal; }
+  .estado{ flex:0 0 auto; font-size:.64rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .45rem; border-radius:2px; white-space:nowrap; }
+  .e-ok{ background:var(--ok-bg); color:var(--ok-fg); }
+  .e-mig{ background:var(--pend-bg); color:var(--pend-fg); }
+  .e-prox{ background:var(--neutro-bg); color:var(--ink-soft); }
+  .card-meta{ display:flex; flex-wrap:wrap; gap:.2rem .8rem; font-size:.74rem; color:var(--ink-soft); margin:.4rem 0 .6rem; }
+  .card-meta .sigla{ font-weight:700; color:var(--mc); letter-spacing:.04em; }
+  .resumen{ margin:0; font-size:.88rem; line-height:1.5; }
+  .notas{ margin:.55rem 0 0; padding-left:1.05rem; font-size:.78rem; line-height:1.45; color:var(--ink-soft); }
+  .notas li + li{ margin-top:.15rem; }
+  .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:.75rem; }
+  .tag, .norma{ font-size:.7rem; padding:.2rem .5rem; border-radius:2px; }
+  .tag{ background:color-mix(in srgb, var(--mc) 15%, var(--mix-base)); color:color-mix(in srgb, var(--mc) 70%, var(--mix-ink)); font-weight:600; }
+  .tag-pend{ background:var(--pend-bg); color:var(--pend-fg); }
+  .norma{ border:1px solid var(--border); color:var(--ink-soft); }
+  .pend{ margin:.7rem 0 0; padding-top:.6rem; border-top:1px dashed var(--border); font-size:.72rem; color:var(--pend-txt); line-height:1.45; }
+  .pend b{ font-weight:600; }
+
+  /* nacional: más grande */
+  .card-nac{ padding:26px; gap:28px; border-color:color-mix(in srgb, var(--mc) 40%, var(--border)); }
+  .card-nac .card-mini{ flex-basis:180px; height:116px; }
+  .card-nac .card-mini svg{ width:180px; height:116px; }
+  .card-nac h3{ font-size:1.55rem; }
+  .card-nac .resumen{ font-size:1rem; max-width:64ch; }
+  @media (max-width:560px){ .card-nac{ flex-direction:column; padding:20px; } .card-nac .card-mini{ flex-basis:auto; width:100%; } }
+
+  /* compacta (celdas de la planilla) */
+  .card-compacta{ align-items:center; padding:14px 16px; border:0; border-radius:0; gap:14px; }
+  .card-compacta .card-mini{ flex-basis:58px; height:40px; }
+  .card-compacta .card-mini svg{ width:58px; height:40px; }
+  .card-compacta .card-top{ flex-direction:column; align-items:flex-start; gap:4px; }
+  .card-compacta .estado{ order:3; }
+  .card-compacta .card-meta{ margin:.3rem 0 0; }
+
+  .tag-lemas{ background:color-mix(in srgb, var(--c-pend) 22%, var(--mix-base)); color:var(--pend-fg); }
+  .lemas-c{ margin-top:.5rem; display:grid; gap:.3rem; justify-items:start; }
+  .lemas-c p{ margin:0; font-size:.74rem; line-height:1.4; color:var(--ink-soft); }
+  .grid-compacta .card-compacta{ align-items:flex-start; }
+  .vacio{ text-align:center; color:var(--ink-soft); padding:40px 0; }
+
+  footer{ border-top:2px solid var(--ink); padding-block:28px 48px; font-size:.8rem; line-height:1.55; color:var(--ink-soft); }
+  footer .wrap{ display:grid; gap:10px; }
+  footer p{ margin:0; max-width:80ch; }
+  footer b{ color:var(--ink); font-weight:600; }
+  .firma{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.3rem 1.2rem; margin-top:10px; padding-top:14px; border-top:1px solid var(--border); }
+  .firma-nombre{ font-weight:700; color:var(--ink); font-size:.92rem; }
+  .firma-lugar{ display:inline-flex; align-items:center; gap:.45rem; }
+  .firma-links a{ color:var(--ink); }
+  .firma-mail{ user-select:all; }
+  .bandera{ --r:1.5; display:inline-flex; flex:0 0 auto; height:.9em; width:calc(.9em * var(--r)); margin-right:.45em; vertical-align:-.05em; box-shadow:0 0 0 1px var(--border); overflow:hidden; }
+  .bandera svg, .bandera img{ width:100%; height:100%; display:block; }
+  .bandera.grande{ height:.6em; width:calc(.6em * var(--r)); vertical-align:.12em; margin-right:.25em; }
+  .sim-aviso{ margin:.6rem 0 0 !important; padding:.45rem .7rem; border-left:3px solid var(--c-pend); background:var(--pend-bg); color:var(--pend-fg) !important; font-size:.84rem; max-width:62ch; }
+
+  /* mapa de la portada */
+  .mapa{ margin:0; width:clamp(118px, 13vw, 150px); position:relative; }
+  .mapa svg{ display:block; width:100%; height:auto; overflow:visible; }
+  .mapa path, .mapa circle{ fill:var(--mc); stroke:var(--bg); stroke-width:2.2; stroke-linejoin:round; cursor:pointer; transition:opacity .15s ease, filter .15s ease; }
+  .mapa a:hover path, .mapa a:hover circle, .mapa a:focus-visible path, .mapa a:focus-visible circle{ filter:brightness(.82); }
+  .mapa a:focus{ outline:none; }
+  .mapa .apagado{ opacity:.18; }
+  .mapa figcaption{ font-size:.68rem; color:var(--ink-soft); margin-top:6px; text-align:center; line-height:1.3; min-height:1.3em; }
+  /* tarjetas: botón siempre al pie */
+  .card-body{ display:flex; flex-direction:column; }
+  .card-pie{ margin-top:auto; padding-top:14px; display:flex; flex-direction:column; gap:10px; }
+  .card-pie .tags{ margin:0; }
+  .card-ir{ align-self:flex-start; display:inline-flex; align-items:center; gap:.4rem; font-size:.74rem; font-weight:600; padding:.42rem .65rem; border:1px solid color-mix(in srgb, var(--mc) 55%, var(--border)); color:var(--mc-ink, var(--ink)); border-radius:var(--radius); background:color-mix(in srgb, var(--mc) 8%, transparent); }
+  .card-ir svg{ width:14px; height:14px; }
+  a.card:hover .card-ir{ background:var(--mc); color:#fff; border-color:var(--mc); }
+  .card-compacta .card-pie{ display:none; }
+  /* tema: botón discreto */
+  .tema{ border-color:transparent !important; background:transparent !important; padding:.35rem; color:var(--ink-soft) !important; }
+  .tema:hover{ color:var(--ink) !important; }
+  .tema span{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  /* aviso del proyecto */
+  .proyecto{ border-left:3px solid var(--celeste); padding-left:12px; }
+
+  /* volver al inicio */
+  .marca{ text-decoration:none; }
+  .franja .wrap{ justify-content:flex-start; }
+  .franja .tema{ margin-left:auto; }
+  .volver-top{ display:inline-flex; align-items:center; gap:.35rem; font-size:.78rem; font-weight:700; text-decoration:none; color:var(--ink); padding:.38rem .7rem .38rem .55rem; border:1px solid var(--ink); border-radius:var(--radius); margin-left:6px; }
+  .volver-top[hidden]{ display:none; }
+  .volver-top:hover{ background:var(--ink); color:var(--bg); }
+  .volver-top svg{ width:15px; height:15px; }
+  
+  .sim-pie{ padding-block:8px 40px; }
+  .volver-pie{ font-size:.9rem; }
+  /* girar el celular */
+  .girar[hidden]{ display:none; }
+  .girar{ display:none; }
+  @media (orientation:portrait) and (max-width:640px){ .girar:not([hidden]){ display:block; } }
+  .girar-in{ display:flex; align-items:center; gap:12px; padding:10px 12px; margin-bottom:18px; background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--celeste); border-radius:var(--radius); }
+  .girar-ico{ flex:0 0 38px; height:38px; color:var(--celeste); display:flex; animation:girar 2.4s ease-in-out infinite; }
+  .girar-ico svg{ width:100%; height:100%; }
+  @keyframes girar{ 0%,30%{ transform:rotate(0); } 55%,85%{ transform:rotate(-90deg); } 100%{ transform:rotate(0); } }
+  @media (prefers-reduced-motion: reduce){ .girar-ico{ animation:none; } }
+  .girar-in p{ margin:0; font-size:.82rem; line-height:1.35; color:var(--ink-soft); }
+  .girar-in p b{ color:var(--ink); }
+  .girar-x{ flex:0 0 auto; font:inherit; font-size:.74rem; font-weight:600; background:none; border:1px solid var(--border); border-radius:var(--radius); padding:.35rem .55rem; color:var(--ink); cursor:pointer; }
+  /* guía plegable en celular */
+  .sim-guia-btn{ display:none; }
+  @media (max-width:640px), (max-height:500px){
+    .sim-guia-btn{ display:flex; align-items:center; justify-content:space-between; width:100%; font:inherit; font-size:.86rem; font-weight:700; color:var(--ink); background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:.65rem .8rem; cursor:pointer; }
+    .sim-guia-btn svg{ width:18px; height:18px; transition:transform .15s ease; }
+    .sim-guia-btn[aria-expanded="true"] svg{ transform:rotate(180deg); }
+    .sim-guia{ display:none; }
+    .sim-guia.abierta{ display:grid; }
+    .sim-cab{ padding-block:18px 20px; margin-bottom:20px; gap:14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="franja">
+  <div class="wrap">
+    <a class="marca" href="#"><span class="flag" aria-hidden="true"></span><span class="marca-tx">Simuladores electorales</span></a>
+    <button type="button" class="tema" id="tema" aria-label="Cambiar a modo oscuro"></button>
+  </div>
+</div>
+
+<div id="vista-portada">
+<div class="wrap hero">
+  <h1>¿Cómo votamos en <span class="celeste">Argentina</span>?</h1>
+  <div>
+    <p class="bajada">Cada provincia elige con sus propias reglas y su propia boleta. Acá podés <b>practicar cada forma de votar</b> y ver cómo se cuenta tu voto: cuándo vale, cuándo queda en blanco y cuándo se anula.</p>
+    <div class="cifras" id="cifras"></div>
+  </div>
+  <figure class="mapa" id="mapa" aria-label="Mapa de los 24 distritos según el tipo de boleta"></figure>
+</div>
+
+<div class="barra">
+  <div class="wrap">
+    <div class="chips" role="group" aria-label="Filtrar por tipo de boleta">
+      <button type="button" class="chip" data-filtro="todas">Todas</button>
+      <button type="button" class="chip" data-filtro="partidaria"><span class="d" style="background:var(--c-partidaria)"></span>Partidaria</button>
+      <button type="button" class="chip" data-filtro="bup"><span class="d" style="background:var(--c-bup)"></span>Única de Papel</button>
+      <button type="button" class="chip" data-filtro="bue"><span class="d" style="background:var(--c-bue)"></span>Única Electrónica</button>
+    </div>
+    <input class="buscar" id="buscar" type="search" placeholder="Buscar distrito…" aria-label="Buscar distrito">
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="nacional-wrap">
+    <p class="rotulo">Cargos nacionales (Presidencia, Senado y Diputados)</p>
+    <div id="nacional"></div>
+  </div>
+  <div id="grupos"></div>
+  <p class="vacio" id="vacio" hidden>Ningún distrito coincide con la búsqueda.</p>
+</main>
+</div>
+
+<div id="vista-sim" hidden>
+  <div class="wrap sim-cab">
+    <a class="volver" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>Todas las formas de votar</a>
+    <div class="sim-tit">
+      <p class="rotulo" id="sim-nivel"></p>
+      <h2 id="sim-titulo"></h2>
+      <p id="sim-bajada"></p>
+      <p class="sim-aviso" id="sim-aviso" hidden></p>
+    </div>
+    <button type="button" class="sim-guia-btn" id="sim-guia-btn" aria-expanded="false" aria-controls="sim-guia"><span id="sim-guia-btn-tx">Cómo se vota</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="sim-guia" id="sim-guia">
+      <ol class="pasos" id="sim-pasos"></ol>
+      <ul class="avisos" id="sim-avisos"></ul>
+    </div>
+  </div>
+  <div class="wrap girar" id="sim-girar" hidden>
+    <div class="girar-in"><span class="girar-ico" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="15" y="6" width="18" height="32" rx="3"/><path d="M22 33h4"/><path d="M40 26a16 16 0 0 1-12 15.5"/><path d="M31 38l-3 3.5 4 1.5"/></svg></span>
+    <p><b>Girá el celular</b> para ver la boleta entera. En vertical también funciona: deslizá la boleta hacia los costados.</p>
+    <button type="button" class="girar-x" id="girar-x" aria-label="Cerrar aviso">Entendido</button></div>
+  </div>
+  <div class="wrap" id="sim-motor"></div>
+  <div class="wrap sim-pie"><a class="volver volver-pie" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>Volver a todas las formas de votar</a></div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p class="proyecto"><b>Sobre este proyecto.</b> ¿Cómo votamos en Argentina? es un proyecto personal con fines educativos. Busca hacer visibles las distintas formas de votar que conviven hoy en el país —boleta partidaria, Boleta Única de Papel y Boleta Única Electrónica— para que cualquiera pueda conocerlas, compararlas y practicarlas antes de llegar al cuarto oscuro.</p>
+    <p><b>Partidos y candidatos ficticios.</b> Los simuladores reproducen el diseño y las reglas de cada boleta, nunca la oferta electoral real.</p>
+    <p><b>Fuentes:</b> tipo de boleta y primarias según la legislación electoral de cada provincia vigente al 20/08/2026 (elaboración propia). Modelos de Boleta Única según Ley 27.781 y Acordada CNE 40/25 (Nación), Ley 9.571 (Córdoba), Ley 14.478 (Santa Fe), Ley XI-1149-2024 y Acordada 06-TEP-2025 (San Luis), Ley XII Nº 21 y Resolución SEP 15/2026 (Chubut), Ley 9.375 y boleta de las generales de 2023 (Mendoza). Boleta Única Electrónica según el simulador oficial de capacitación de CABA 2025 (sistema Vot.Ar) y la cobertura de Neuquén 2023 y Salta 2023–2025 y la reforma del Código Electoral de Entre Ríos (2024). Lo marcado como “a verificar” todavía no se contrastó con la norma.</p>
+    <div class="firma">
+      <span class="firma-nombre">Gonzalo Sagarraga</span>
+      <span class="firma-lugar">San Francisco, Córdoba, Argentina <span class="bandera" aria-hidden="true"></span></span>
+      <span class="firma-links"><a href="https://instagram.com/gsagarraga" target="_blank" rel="noopener">Instagram</a> · <a href="https://linkedin.com/in/gsagarraga" target="_blank" rel="noopener">LinkedIn</a> · <span class="firma-mail">gsagarraga@gmail.com</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/banderas-img.js"></script>
+<script src="js/mapa-data.js"></script>
+<script src="js/banderas.js"></script>
+<script src="js/jurisdicciones.js"></script>
+<script src="js/ficticios.js"></script>
+<script src="js/reglas.js"></script>
+<script src="js/motores/partidaria.js"></script>
+<script src="js/motores/bup-columnas.js"></script>
+<script src="js/motores/bup-filas.js"></script>
+<script src="js/motores/bue.js"></script>
+<script src="js/portada.js"></script>
+<script src="js/tema.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

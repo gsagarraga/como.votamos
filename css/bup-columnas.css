@@ -1,0 +1,190 @@
+/* Motor BUP · partidos en columnas (nacional / mendocino).
+   La boleta se dibuja toda en em: --bfs fija la escala. */
+
+.escenarios{ display:inline-flex; flex-wrap:wrap; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:10px; }
+.esc{ font:inherit; font-size:.82rem; font-weight:600; padding:.45rem .9rem; border:0; border-left:1px solid var(--border); background:var(--panel); color:var(--ink); cursor:pointer; }
+.esc:first-child{ border-left:0; }
+.esc.activo{ background:var(--ink); color:var(--chip-activo-fg); }
+.esc:disabled:not(.activo){ opacity:.5; cursor:not-allowed; }
+.esc-nota{ margin:0 0 16px; font-size:.84rem; color:var(--ink-soft); max-width:70ch; }
+
+/* ---------- hoja ---------- */
+.bc-scroll{ overflow-x:auto; padding:2px 2px 14px; }
+.bc{ --bfs:14px; font-size:var(--bfs); display:flex; width:max-content; min-width:100%; background:var(--paper); color:var(--ink); border:1px solid color-mix(in srgb, var(--ink) 30%, var(--border)); box-shadow:0 18px 40px -26px rgba(0,0,0,.5); }
+
+.bc-talon{ flex:0 0 2.4em; border-right:2px dashed color-mix(in srgb, var(--ink) 35%, transparent); display:flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--ink) 4%, var(--paper)); }
+.bc-talon span{ writing-mode:vertical-rl; transform:rotate(180deg); font-size:.62em; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); white-space:nowrap; }
+.bc-hoja{ flex:1 1 auto; min-width:0; }
+
+.bc-top{ display:grid; grid-template-columns:auto 1fr auto; gap:1.2em; align-items:center; padding:.6em .9em; border-bottom:.18em solid var(--ink); }
+.bc-mesa{ display:flex; flex-direction:column; font-size:.66em; line-height:1.3; color:var(--ink-soft); }
+.bc-mesa b{ color:var(--ink); font-size:1.15em; }
+.bc-inst{ text-align:center; font-size:.7em; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
+.bc-elec{ display:flex; flex-direction:column; text-align:right; font-size:.72em; line-height:1.3; }
+.bc-elec span{ color:var(--c-bup); font-weight:600; font-size:.9em; }
+
+/* ---------- grilla ---------- */
+.bc-grid{ display:grid; grid-template-columns:8.5em repeat(var(--cols), minmax(11.5em, 1fr)); }
+.bc-esq{ display:flex; align-items:center; padding:.6em; border-right:1px solid var(--bup-linea); border-bottom:1px solid var(--bup-linea); }
+.bc-esq span{ font-size:.62em; line-height:1.35; color:var(--ink-soft); }
+
+.bc-head{ display:flex; flex-direction:column; align-items:center; gap:.4em; padding:.5em .6em .6em; background:var(--pc); color:#fff; border-right:1px solid var(--paper); text-align:center; }
+.bc-num{ font-size:1.5em; font-weight:800; line-height:1; letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+.bc-nom{ align-self:stretch; background:#fff; color:#1a1a1a; font-size:.72em; font-weight:700; text-transform:uppercase; line-height:1.15; padding:.45em .3em; min-height:3.1em; display:flex; align-items:center; justify-content:center; }
+.bc-logo{ width:2.3em; height:2.3em; padding:.35em; background:#fff; color:var(--pc); border-radius:.2em; display:flex; }
+.bc-logo svg{ width:100%; height:100%; }
+
+.bc-cat{ display:flex; align-items:center; padding:.6em; background:var(--bup-cat); color:var(--bup-cat-fg); border-bottom:1px solid var(--paper); }
+.bc-cat span{ font-size:.7em; font-weight:700; letter-spacing:.06em; text-transform:uppercase; line-height:1.25; }
+.bc-cat-lc{ background:color-mix(in srgb, var(--bup-cat) 80%, var(--c-bup)); }
+
+.bc-cel{ display:flex; flex-direction:column; align-items:center; gap:.55em; padding:.7em .7em .8em; border-right:1px solid var(--bup-linea); border-bottom:1px solid var(--bup-linea); box-shadow:inset .22em 0 0 var(--pc); }
+.bc-vacia{ justify-content:center; background:repeating-linear-gradient(135deg, transparent 0 .5em, color-mix(in srgb, var(--ink) 5%, transparent) .5em 1em); }
+.bc-vacia span{ font-size:.62em; color:var(--ink-soft); text-align:center; }
+
+/* recuadro de marca: ~1 cm */
+.bc-box{ width:2.4em; height:2.4em; flex:0 0 auto; padding:0; border:.14em solid var(--ink); border-radius:.15em; background:var(--paper); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:inherit; transition:box-shadow .12s ease; }
+.bc-box:hover:not(:disabled){ box-shadow:0 0 0 .2em color-mix(in srgb, var(--birome) 25%, transparent); }
+.bc-box:disabled{ cursor:default; }
+.bc-box .marca{ width:2.1em; height:2.1em; overflow:visible; }
+.marca path{ fill:none; stroke:var(--birome); stroke-width:4.2; stroke-linecap:round; stroke-dasharray:40; stroke-dashoffset:0; animation:trazo .22s ease-out both; }
+.marca path:nth-child(2){ animation-delay:.12s; }
+@keyframes trazo{ from{ stroke-dashoffset:40; } to{ stroke-dashoffset:0; } }
+@media (prefers-reduced-motion: reduce){ .marca path{ animation:none; } }
+
+/* celda marcada y conflictos */
+.bc-cel:has(.bc-box.on){ background:color-mix(in srgb, var(--birome) 6%, var(--paper)); }
+
+.bc-foto{ display:flex; gap:.25em; padding:.25em; background:#fff; border:1px solid var(--bup-linea); }
+.bc-foto span{ width:2.6em; height:3.3em; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; background:linear-gradient(#fff, color-mix(in srgb, var(--pc) 22%, #fff)); color:color-mix(in srgb, var(--pc) 75%, #333); }
+.bc-foto svg{ width:100%; height:94%; fill:currentColor; }
+
+.bc-nomina{ list-style:none; margin:0; padding:0; align-self:stretch; display:grid; gap:.15em; font-size:.64em; line-height:1.25; }
+.bc-nomina li{ display:flex; gap:.35em; overflow-wrap:anywhere; }
+.bc-n{ flex:0 0 1.2em; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
+.bc-nomina.formula li{ flex-direction:column; gap:0; text-align:center; }
+.bc-rol{ font-size:.85em; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); }
+
+.bc-lc{ flex-direction:row; justify-content:center; gap:.6em; }
+.bc-lc span{ font-size:.62em; line-height:1.3; color:var(--ink-soft); max-width:9em; }
+
+/* ---------- urna ---------- */
+.urna-escena{ display:flex; flex-wrap:wrap; align-items:center; gap:28px 40px; padding:28px; border:1px solid var(--border); background:var(--panel); }
+.urna{ position:relative; width:150px; height:150px; flex:0 0 auto; }
+.urna-cuerpo{ position:absolute; left:10px; right:10px; bottom:0; height:96px; background:color-mix(in srgb, var(--c-partidaria) 18%, var(--paper)); border:2px solid var(--ink); display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; z-index:2; }
+.urna-cuerpo span{ font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.urna-ranura{ position:absolute; left:50%; bottom:92px; transform:translateX(-50%); width:56px; height:6px; background:var(--ink); z-index:3; }
+.urna-papel{ position:absolute; left:50%; bottom:90px; width:34px; height:46px; margin-left:-17px; background:var(--paper); border:1.5px solid var(--ink); z-index:1;
+  background-image:linear-gradient(90deg, transparent 32%, color-mix(in srgb, var(--ink) 25%, transparent) 33%, transparent 34%, transparent 65%, color-mix(in srgb, var(--ink) 25%, transparent) 66%, transparent 67%);
+  animation:entrar 1.1s ease-in .15s both; }
+@keyframes entrar{ from{ transform:translateY(-40px); } 70%{ transform:translateY(30px); } to{ transform:translateY(46px); } }
+@media (prefers-reduced-motion: reduce){ .urna-papel{ animation:none; transform:translateY(46px); } }
+.urna-tx{ flex:1 1 260px; min-width:0; }
+.urna-tx h4{ margin:0 0 6px; font-size:1.15rem; }
+.urna-tx p{ margin:0; font-size:.9rem; color:var(--ink-soft); max-width:56ch; }
+
+/* panel sin solapa de sobre */
+.tablero .sobre-cuerpo{ padding-top:18px; }
+
+.bc-nm{ min-width:0; }
+
+/* boleta a todo el ancho; el panel va debajo, en dos columnas */
+.sim-grid.ancho{ grid-template-columns:minmax(0, 1fr); gap:28px; }
+.sim-grid.ancho .tablero{ position:static; }
+@media (min-width:860px){
+  .sim-grid.ancho .tablero .sobre-cuerpo{ display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); column-gap:40px; align-items:start; }
+  .sim-grid.ancho .tablero .sobre-titulo,
+  .sim-grid.ancho .tablero .veredicto{ grid-column:1; }
+  .sim-grid.ancho .tablero .rotulo-sm{ grid-column:2; grid-row:1; }
+  .sim-grid.ancho .tablero .filas{ grid-column:2; grid-row:2 / span 3; margin-top:0; }
+  .sim-grid.ancho .tablero .sobre-acc,
+  .sim-grid.ancho .tablero .nota-norma{ grid-column:1; }
+}
+/* la barra de estado se ve siempre en este motor */
+.sobre-barra.siempre{ position:fixed; z-index:30; left:0; right:0; bottom:0; display:flex; align-items:center; gap:12px; font:inherit; font-size:.84rem; text-align:left; cursor:pointer;
+  padding:12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  background:var(--panel); color:var(--ink); border:0; border-top:2px solid var(--ink); }
+.sobre-barra.siempre .sb-n{ font-weight:700; }
+.sobre-barra.siempre .sb-est{ flex:1 1 auto; min-width:0; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sobre-barra.siempre.est-bien .sb-est{ color:var(--ok-fg); }
+.sobre-barra.siempre.est-mal .sb-est{ color:var(--mal-fg); }
+.sobre-barra.siempre .sb-ir{ font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.sim-grid.ancho{ padding-bottom:96px; }
+
+/* cabecera con lista completa (Mendoza, Chubut, Entre Ríos): casillero 1 negro */
+.bc-head-lc{ background:#141414; color:#fff; box-shadow:inset 0 .3em 0 var(--pc); padding-top:.75em; gap:.45em; }
+.bc-head-lc .bc-num{ font-size:1.05em; font-weight:700; }
+.bc-head-lc .bc-num small{ font-size:.6em; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:#bbb; }
+.bc-head-lc .bc-foto{ border-color:#333; }
+.bc-lc-fila{ display:flex; align-items:center; gap:.5em; margin-top:.15em; }
+.bc-lc-fila > span{ font-size:.58em; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#ddd; text-align:left; line-height:1.15; max-width:6em; }
+.bc-head-lc .bc-box{ background:#fff; border-color:#fff; }
+.bc-head-lc .bc-box .marca path{ stroke:#1f4fb0; }
+.bc-head-lc.conflicto{ box-shadow:inset 0 .3em 0 var(--pc), inset 0 0 0 .2em #c0392b; }
+.bc-cel.conflicto{ background:color-mix(in srgb, #c0392b 10%, var(--paper)) !important; box-shadow:inset .22em 0 0 var(--pc), inset 0 0 0 .14em #c0392b; }
+.duda{ display:block; margin-top:.6rem; padding-top:.5rem; border-top:1px dashed currentColor; font-size:.78rem; opacity:.85; }
+
+/* ================= Chubut (modelo Gaiman, Res. SEP 15/2026) ================= */
+.bc.estilo-chubut{ background:#fff; color:#111; font-family:"Rubik", Arial, sans-serif; }
+.ch-top{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1em; padding:.5em .6em; background:#d9d9d9; }
+.ch-distrito{ font-size:1.25em; font-weight:700; letter-spacing:.04em; padding:.25em .7em; background:#fff; border:.18em solid #5fb2dc; border-radius:.35em; }
+.ch-inst{ justify-self:center; display:flex; align-items:center; gap:.45em; font-size:.72em; font-weight:600; text-transform:uppercase; text-align:center; max-width:22em; line-height:1.2; }
+.ch-inst svg{ flex:0 0 auto; width:2em; height:2em; }
+.ch-org{ display:flex; flex-direction:column; font-size:.66em; line-height:1.3; border-bottom:.15em solid #5fb2dc; padding-bottom:.2em; }
+.ch-grid{ grid-template-columns:3.6em repeat(var(--cols), minmax(11.5em, 1fr)); background:#fff; gap:0 .4em; padding:0 .4em 0 0; }
+.ch-lado{ background:#111 !important; color:#fff !important; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:.6em; padding:.6em .3em !important; border:0 !important; border-bottom:.3em solid #fff !important; }
+.ch-lado svg{ width:1.8em; height:1.8em; order:-1; margin-bottom:auto; }
+.ch-lado span{ writing-mode:vertical-rl; transform:rotate(180deg); font-size:.86em !important; font-weight:700; letter-spacing:.12em !important; text-transform:uppercase; white-space:nowrap; color:#fff !important; }
+.estilo-chubut .bc-head{ background:#111; box-shadow:none; border:0; padding:.6em .7em .8em; }
+.estilo-chubut .bc-head .bc-num{ font-size:1.05em; font-weight:700; }
+.estilo-chubut .bc-head .bc-nom{ font-size:.66em; min-height:2.6em; }
+.estilo-chubut .bc-head .bc-logo{ width:4em; height:4em; padding:.7em; border-radius:50%; }
+.estilo-chubut .bc-head .bc-foto{ border:0; background:none; padding:0; }
+.estilo-chubut .bc-head .bc-foto span, .ch-panel .bc-foto span{ border-radius:50%; width:3.4em; height:3.4em; background:linear-gradient(#fff, color-mix(in srgb, var(--pc) 22%, #fff)); }
+.estilo-chubut .bc-lc-fila > span{ color:#fff; }
+.ch-cel{ background:#111 !important; box-shadow:none !important; border:0 !important; padding:0 .55em .55em !important; }
+.ch-panel{ flex:1 1 auto; align-self:stretch; display:flex; flex-direction:column; align-items:center; gap:.5em; padding:.7em .5em .8em; background:#e6e6e6; }
+.ch-panel .bc-foto{ background:none; border:0; padding:0; }
+.ch-panel .bc-foto.f2 span + span{ margin-left:-.6em; }
+.ch-nombres{ list-style:none; margin:0; padding:0; text-align:center; font-size:.66em; line-height:1.3; display:grid; gap:.25em; }
+.ch-nombres li{ display:flex; flex-direction:column; }
+.ch-nombres b{ font-size:1.15em; letter-spacing:.02em; }
+.ch-nombres .bc-rol{ font-size:.8em; color:#555; }
+.ch-mas{ font-size:.85em; color:#666; }
+.ch-box{ margin-top:auto; width:3.1em; height:3.1em; border:.22em solid #111; border-radius:.35em; }
+.ch-box .marca{ width:2.6em; height:2.6em; }
+.ch-cel.conflicto .ch-panel{ background:#f6d4cf; box-shadow:inset 0 0 0 .18em #c0392b; }
+.ch-cel:has(.bc-box.on) .ch-panel{ background:#eef2fb; }
+.estilo-chubut .bc-vacia{ background:#111 !important; box-shadow:none !important; border:0 !important; padding:0 .55em .55em !important; }
+.estilo-chubut .bc-vacia span{ align-self:stretch; flex:1 1 auto; display:flex; align-items:center; justify-content:center; background:#9a9a9a; color:#fff; font-size:.66em; font-weight:700; text-transform:uppercase; text-align:center; padding:.5em; }
+.ch-trama{ height:1.2em; background:repeating-linear-gradient(45deg, #e5e5e5 0 2px, #d2d2d2 2px 4px); }
+
+/* ================= Mendoza (boleta de las generales 2023) ================= */
+.bc.estilo-mendoza{ background:#fff; color:#1b1b1b; font-family:Arial, "Helvetica Neue", Helvetica, sans-serif; position:relative; }
+.mz-grid{ grid-template-columns:3.6em repeat(var(--cols), minmax(11.5em, 1fr)); border-top:1px solid #9a9a9a; }
+.mz-lado{ background:#fff !important; color:#555 !important; display:flex; align-items:center; justify-content:center; padding:.4em .2em !important; border-right:1px solid #9a9a9a !important; border-bottom:1px solid #9a9a9a !important; }
+.mz-lado span{ writing-mode:vertical-rl; transform:rotate(180deg); font-size:.62em !important; font-weight:400 !important; letter-spacing:.02em !important; text-transform:uppercase; text-align:center; color:#555 !important; line-height:1.15; max-height:12em; }
+.estilo-mendoza .bc-head, .mz-cel{ background:#fff; color:#1b1b1b; border:0; border-right:1px solid #9a9a9a; border-bottom:1px solid #9a9a9a; box-shadow:inset .45em 0 0 var(--pc); padding:.35em .45em .5em 1em; display:flex; flex-direction:column; align-items:stretch; gap:.35em; text-align:left; }
+.mz-cab{ display:flex; align-items:flex-start; justify-content:space-between; gap:.4em; }
+.mz-cab > span{ font-size:.56em; line-height:1.2; text-transform:uppercase; color:#222; }
+.mz-box{ width:1.9em; height:1.9em; border:.12em solid #222; border-radius:0; flex:0 0 auto; background:#fff; }
+.mz-box .marca{ width:1.7em; height:1.7em; }
+.mz-logo{ align-self:center; display:flex; align-items:center; gap:.35em; padding:.4em .6em; background:var(--pc); color:#fff; font-weight:800; font-size:.66em; text-transform:uppercase; line-height:1.05; max-width:100%; }
+.mz-logo > span{ flex:0 0 auto; width:2em; height:2em; background:#fff; color:var(--pc); padding:.25em; display:flex; }
+.mz-logo svg{ width:100%; height:100%; }
+.mz-pnom{ text-align:center; font-size:.6em; text-transform:uppercase; }
+.mz-cuerpo{ display:flex; align-items:flex-end; gap:.45em; }
+.mz-cuerpo .bc-foto{ border:0; padding:0; background:none; gap:0; }
+.mz-cuerpo .bc-foto span{ width:2.4em; height:3em; }
+.mz-nom{ display:flex; flex-direction:column; font-size:.58em; line-height:1.15; padding-bottom:.2em; }
+.mz-nom b{ font-size:1.12em; }
+.mz-nom small{ font-size:.8em; color:#555; margin-bottom:.35em; }
+.mz-lista{ list-style:none; margin:0; padding:0; font-size:.54em; line-height:1.25; color:#333; }
+.mz-lista .mz-primero{ font-weight:700; font-size:1.18em; color:#111; margin-bottom:.1em; }
+.mz-cel.conflicto{ background:#fbe2de !important; box-shadow:inset .45em 0 0 var(--pc), inset 0 0 0 .14em #c0392b !important; }
+.mz-cel:has(.bc-box.on){ background:#eef2fb; }
+.mz-head.conflicto{ box-shadow:inset .45em 0 0 var(--pc), inset 0 0 0 .14em #c0392b !important; }
+.estilo-mendoza .bc-vacia{ background:#f4f4f4 !important; border-right:1px solid #9a9a9a !important; border-bottom:1px solid #9a9a9a !important; box-shadow:inset .45em 0 0 var(--pc) !important; }
+.mz-marca{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; font-size:3.2em; font-weight:700; color:rgba(230,70,50,.13); text-transform:uppercase; transform:rotate(-14deg); white-space:nowrap; }
+.bc.estilo-mendoza, .bc.estilo-chubut{ width:auto; min-width:calc(3.6em + var(--cols) * 11.5em + .4em); }
+.bc.estilo-mendoza{ overflow:hidden; }
